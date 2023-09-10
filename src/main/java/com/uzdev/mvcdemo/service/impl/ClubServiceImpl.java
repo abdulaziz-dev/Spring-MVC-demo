@@ -1,6 +1,7 @@
 package com.uzdev.mvcdemo.service.impl;
 
 import com.uzdev.mvcdemo.dto.ClubDto;
+import com.uzdev.mvcdemo.mappers.ClubMapper;
 import com.uzdev.mvcdemo.models.Club;
 import com.uzdev.mvcdemo.repository.ClubRepository;
 import com.uzdev.mvcdemo.service.ClubService;
@@ -8,6 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.uzdev.mvcdemo.mappers.ClubMapper.mapToClub;
+import static com.uzdev.mvcdemo.mappers.ClubMapper.mapToClubDto;
 
 @Service
 public class ClubServiceImpl implements ClubService {
@@ -50,30 +54,7 @@ public class ClubServiceImpl implements ClubService {
     @Override
     public List<ClubDto> searchClubs(String query) {
         List<Club> clubs = clubRepository.searchClubs(query);
-        return clubs.stream().map(club -> mapToClubDto(club)).collect(Collectors.toList());
+        return clubs.stream().map(ClubMapper::mapToClubDto).collect(Collectors.toList());
     }
 
-    private ClubDto mapToClubDto(Club club) {
-        ClubDto  clubDto = ClubDto.builder()
-                .id(club.getId())
-                .title(club.getTitle())
-                .content(club.getContent())
-                .createdOn(club.getCreatedOn())
-                .updatedOn(club.getUpdatedOn())
-                .photoUrl(club.getPhotoUrl())
-                .build();
-        return clubDto;
-    }
-
-    private Club mapToClub(ClubDto clubDto){
-        Club club = Club.builder()
-                .id(clubDto.getId())
-                .title(clubDto.getTitle())
-                .content(clubDto.getContent())
-                .createdOn(clubDto.getCreatedOn())
-                .updatedOn(clubDto.getUpdatedOn())
-                .photoUrl(clubDto.getPhotoUrl())
-                .build();
-        return club;
-    }
 }
