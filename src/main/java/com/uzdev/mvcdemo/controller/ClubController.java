@@ -2,7 +2,10 @@ package com.uzdev.mvcdemo.controller;
 
 import com.uzdev.mvcdemo.dto.ClubDto;
 import com.uzdev.mvcdemo.models.Club;
+import com.uzdev.mvcdemo.models.UserEntity;
+import com.uzdev.mvcdemo.security.SecurityUtility;
 import com.uzdev.mvcdemo.service.ClubService;
+import com.uzdev.mvcdemo.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,21 +19,37 @@ import java.util.List;
 public class ClubController {
 
     private ClubService clubService;
+    private UserService userService;
 
-    public ClubController(ClubService clubService) {
+    public ClubController(ClubService clubService, UserService userService) {
         this.clubService = clubService;
+        this.userService = userService;
     }
 
     @GetMapping
     public String listClubs(Model model){
+        UserEntity user = new UserEntity();
         List<ClubDto> clubs = clubService.findAllClubs();
+        String username = SecurityUtility.getSessionUser();
+        if (username != null){
+            user = userService.findByUsername(username);
+            model.addAttribute("user", user);
+        }
+        model.addAttribute("user", user);
         model.addAttribute("clubs", clubs);
         return "clubs-list";
     }
 
     @GetMapping("/{clubId}")
     public String clubDetails(@PathVariable("clubId") Long clubId, Model model){
+        UserEntity user = new UserEntity();
         ClubDto club = clubService.findClubById(clubId);
+        String username = SecurityUtility.getSessionUser();
+        if (username != null){
+            user = userService.findByUsername(username);
+            model.addAttribute("user", user);
+        }
+        model.addAttribute("user", user);
         model.addAttribute("club", club);
         return "clubs-detail";
     }

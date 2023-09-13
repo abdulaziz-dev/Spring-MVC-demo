@@ -1,9 +1,11 @@
 package com.uzdev.mvcdemo.dto;
 
+import com.uzdev.mvcdemo.models.UserEntity;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -19,4 +21,5 @@ public class ClubDto {
     private LocalDateTime createdOn;
     private LocalDateTime updatedOn;
     private List<EventDto> events;
+    private UserEntity createdBy;
 }

@@ -3,7 +3,10 @@ package com.uzdev.mvcdemo.service.impl;
 import com.uzdev.mvcdemo.dto.ClubDto;
 import com.uzdev.mvcdemo.mappers.ClubMapper;
 import com.uzdev.mvcdemo.models.Club;
+import com.uzdev.mvcdemo.models.UserEntity;
 import com.uzdev.mvcdemo.repository.ClubRepository;
+import com.uzdev.mvcdemo.repository.UserRepository;
+import com.uzdev.mvcdemo.security.SecurityUtility;
 import com.uzdev.mvcdemo.service.ClubService;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +20,11 @@ import static com.uzdev.mvcdemo.mappers.ClubMapper.mapToClubDto;
 public class ClubServiceImpl implements ClubService {
 
     private final ClubRepository clubRepository;
+    private final UserRepository userRepository;
 
-    public ClubServiceImpl(ClubRepository clubRepository) {
+    public ClubServiceImpl(ClubRepository clubRepository, UserRepository userRepository) {
         this.clubRepository = clubRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -30,7 +35,10 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public ClubDto saveClub(ClubDto clubDto) {
+        String username = SecurityUtility.getSessionUser();
+        UserEntity user = userRepository.findByUsername(username);
         Club club = mapToClub(clubDto);
+        club.setCreatedBy(user);
         return mapToClubDto(clubRepository.save(club));
     }
 
@@ -42,7 +50,10 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public void updateClub(ClubDto clubDto) {
+        String username = SecurityUtility.getSessionUser();
+        UserEntity user = userRepository.findByUsername(username);
         Club club = mapToClub(clubDto);
+        club.setCreatedBy(user);
         clubRepository.save(club);
     }
 

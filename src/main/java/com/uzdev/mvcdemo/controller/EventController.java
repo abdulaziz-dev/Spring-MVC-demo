@@ -2,7 +2,10 @@ package com.uzdev.mvcdemo.controller;
 
 import com.uzdev.mvcdemo.dto.EventDto;
 import com.uzdev.mvcdemo.models.Event;
+import com.uzdev.mvcdemo.models.UserEntity;
+import com.uzdev.mvcdemo.security.SecurityUtility;
 import com.uzdev.mvcdemo.service.EventService;
+import com.uzdev.mvcdemo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,22 +18,38 @@ import java.util.List;
 public class EventController {
 
     private final EventService eventService;
+    private final UserService userService;
 
     @Autowired
-    public EventController(EventService eventService) {
+    public EventController(EventService eventService, UserService userService) {
         this.eventService = eventService;
+        this.userService = userService;
     }
 
     @GetMapping
     public String eventList(Model model){
+        UserEntity user = new UserEntity();
         List<EventDto> events = eventService.findAllEvents();
+        String username = SecurityUtility.getSessionUser();
+        if (username != null){
+            user = userService.findByUsername(username);
+            model.addAttribute("user", user);
+        }
+        model.addAttribute("user", user);
         model.addAttribute("events", events);
         return "events-list";
     }
 
     @GetMapping("{eventId}")
     public String viewEvent(@PathVariable("eventId") Long eventId, Model model){
+        UserEntity user = new UserEntity();
         EventDto event = eventService.findByEventId(eventId);
+        String username = SecurityUtility.getSessionUser();
+        if (username != null){
+            user = userService.findByUsername(username);
+            model.addAttribute("user", user);
+        }
+        model.addAttribute("user", user);
         model.addAttribute("event", event);
         return "events-detail";
     }

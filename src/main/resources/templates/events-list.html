@@ -26,7 +26,9 @@
                            href="#!"></a>
                     </div>
                     <a class="btn btn-primary" th:href="@{/events/{eventId}(eventId=${event.id})}">View</a>
-                    <a class="btn btn-primary" th:href="@{/events/{eventId}/edit(eventId=${event.id})}">Edit</a>
+                    <div th:if="${user.id} == ${event.club.createdBy.id}" >
+                        <a class="btn btn-primary" th:href="@{/events/{eventId}/edit(eventId=${event.id})}">Edit</a>
+                    </div>
                 </div>
             </div>
         </div>
